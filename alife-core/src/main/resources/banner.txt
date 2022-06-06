@@ -1,0 +1,1 @@
+ALIFE Simulator v ${application.version}
