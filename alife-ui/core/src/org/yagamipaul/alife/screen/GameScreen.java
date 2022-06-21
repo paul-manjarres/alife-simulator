@@ -4,7 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector2;
 import org.yagamipaul.alife.MyGdxGame;
+import org.yagamipaul.alife.entities.Ant;
+import org.yagamipaul.alife.entities.BaseEntity;
+import org.yagamipaul.alife.manager.EntityManager;
+import org.yagamipaul.alife.manager.TextureManager;
 
 public class GameScreen implements Screen {
 
@@ -13,10 +18,20 @@ public class GameScreen implements Screen {
 
     OrthographicCamera camera;
 
+    private EntityManager entityManager;
+
     public GameScreen(MyGdxGame game){
         this.game = game;
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 800, 480);
+        camera.setToOrtho(false, 1280, 720);
+
+        entityManager = new EntityManager();
+
+
+        for (int i = 0; i <7; i++) {
+            Ant newAnt = new Ant(new Vector2(100+i*100, 20+i*100), Vector2.Zero);
+            entityManager.addEntity(newAnt);
+        }
 
     }
 
@@ -40,7 +55,14 @@ public class GameScreen implements Screen {
         game.getBatch().setProjectionMatrix(camera.combined);
 
         game.getBatch().begin();
-        game.font.draw(game.getBatch(), "Entities: " + 0, 0, 480);
+        game.font.draw(game.getBatch(), "Entities: " + entityManager.getEntities().size, 0, 480);
+
+        //game.getBatch().draw(TextureManager.ANT_TEXTURE, 0,0,TextureManager.ANT_TEXTURE.getWidth(),TextureManager.ANT_TEXTURE.getHeight());
+
+        for (BaseEntity entity : entityManager.getEntities()) {
+            entity.render(game.getBatch());
+        }
+
         game.getBatch().end();
 
     }
