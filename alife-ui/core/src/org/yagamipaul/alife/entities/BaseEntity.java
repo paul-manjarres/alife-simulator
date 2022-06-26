@@ -5,7 +5,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import lombok.Getter;
 
-public abstract class BaseEntity {
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
+public abstract class BaseEntity implements Observable {
 
   protected String name;
 
@@ -27,6 +30,8 @@ public abstract class BaseEntity {
   /** Flag indicator of the entity's status */
   protected boolean alive = true;
 
+  private PropertyChangeSupport pcSupport;
+
   /**
    * @param texture
    * @param position
@@ -39,6 +44,7 @@ public abstract class BaseEntity {
     this.direction = direction;
     this.health = 100;
     this.id = EntityIdGenerator.createId();
+    this.pcSupport = new PropertyChangeSupport(this);
   }
 
   /** Updates the state of the entity. */
@@ -104,6 +110,17 @@ public abstract class BaseEntity {
   private void die() {
     this.health = 0;
     this.alive = false;
+    pcSupport.firePropertyChange("alive", true, false);
+  }
+
+  @Override
+  public void addObserver(PropertyChangeListener pcl) {
+    this.pcSupport.addPropertyChangeListener(pcl);
+  }
+
+  @Override
+  public void removeObserver(PropertyChangeListener pcl) {
+    this.pcSupport.removePropertyChangeListener(pcl);
   }
 
   public int getHealth() {

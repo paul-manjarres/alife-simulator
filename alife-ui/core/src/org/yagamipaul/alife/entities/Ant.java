@@ -14,4 +14,9 @@ public class Ant extends BaseEntity {
   public void update() {
     this.decreaseHealth(1);
   }
+
+  @Override
+  public String toString() {
+    return "Ant["+this.id+"]";
+  }
 }

@@ -6,9 +6,12 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import org.yagamipaul.alife.MyGdxGame;
+import org.yagamipaul.alife.Simulator;
 import org.yagamipaul.alife.entities.Ant;
 import org.yagamipaul.alife.entities.BaseEntity;
 import org.yagamipaul.alife.manager.EntityManager;
+
+import java.security.SecureRandom;
 
 public class GameScreen implements Screen {
 
@@ -18,16 +21,24 @@ public class GameScreen implements Screen {
 
   private EntityManager entityManager;
 
+  private Simulator simulator;
+
+  private SecureRandom secureRandom;
+
   public GameScreen(MyGdxGame game) {
     this.game = game;
     camera = new OrthographicCamera();
     camera.setToOrtho(false, 1280, 720);
 
     entityManager = new EntityManager();
+    simulator = new Simulator();
+
+    this.secureRandom = new SecureRandom();
 
     for (int i = 0; i < 7; i++) {
-      Ant newAnt = new Ant(new Vector2(100 + i * 100, 20 + i * 100), Vector2.Zero);
+      Ant newAnt = new Ant(new Vector2(secureRandom.nextInt(700), secureRandom.nextInt(700)), Vector2.Zero);
       entityManager.addEntity(newAnt);
+      newAnt.addObserver(simulator);
     }
   }
 
@@ -50,10 +61,10 @@ public class GameScreen implements Screen {
     game.getBatch().begin();
     game.font.draw(
         game.getBatch(),
-        (int) Gdx.graphics.getFramesPerSecond() + " fps",
+        "FPS: "+ (int) Gdx.graphics.getFramesPerSecond(),
         3,
         Gdx.graphics.getHeight() - 3);
-    game.font.draw(game.getBatch(), "Entities: " + entityManager.getEntities().size, 0, 480);
+    game.font.draw(game.getBatch(), "Entities: " + entityManager.getEntities().size, 3, Gdx.graphics.getHeight() - 30);
 
     // game.getBatch().draw(TextureManager.ANT_TEXTURE,
     // 0,0,TextureManager.ANT_TEXTURE.getWidth(),TextureManager.ANT_TEXTURE.getHeight());
