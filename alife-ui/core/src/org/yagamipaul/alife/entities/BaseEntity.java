@@ -3,10 +3,9 @@ package org.yagamipaul.alife.entities;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import lombok.Getter;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import lombok.Getter;
 
 public abstract class BaseEntity implements Observable {
 
@@ -57,8 +56,8 @@ public abstract class BaseEntity implements Observable {
     float y = this.position.y;
     int width = this.texture.getWidth();
     int height = this.texture.getHeight();
-    float scaleX = 1f;
-    float scaleY = 1f;
+    float scaleX = 0.5f;
+    float scaleY = 0.5f;
     float originX = width / 2;
     float originY = height / 2;
 

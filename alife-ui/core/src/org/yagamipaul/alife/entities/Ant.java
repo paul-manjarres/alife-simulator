@@ -1,6 +1,7 @@
 package org.yagamipaul.alife.entities;
 
 import com.badlogic.gdx.math.Vector2;
+import java.security.SecureRandom;
 import org.yagamipaul.alife.manager.TextureManager;
 
 public class Ant extends BaseEntity {
@@ -12,11 +13,15 @@ public class Ant extends BaseEntity {
 
   @Override
   public void update() {
-    this.decreaseHealth(1);
+
+    int random = new SecureRandom().nextInt(100);
+    if (random < 30) {
+      this.decreaseHealth(1);
+    }
   }
 
   @Override
   public String toString() {
-    return "Ant["+this.id+"]";
+    return "Ant[" + this.id + "]";
   }
 }

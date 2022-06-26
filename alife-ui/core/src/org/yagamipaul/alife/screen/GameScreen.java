@@ -5,21 +5,17 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
+import java.security.SecureRandom;
 import org.yagamipaul.alife.MyGdxGame;
-import org.yagamipaul.alife.Simulator;
 import org.yagamipaul.alife.entities.Ant;
 import org.yagamipaul.alife.entities.BaseEntity;
-import org.yagamipaul.alife.manager.EntityManager;
-
-import java.security.SecureRandom;
+import org.yagamipaul.alife.manager.Simulator;
 
 public class GameScreen implements Screen {
 
   final MyGdxGame game;
 
   OrthographicCamera camera;
-
-  private EntityManager entityManager;
 
   private Simulator simulator;
 
@@ -30,14 +26,14 @@ public class GameScreen implements Screen {
     camera = new OrthographicCamera();
     camera.setToOrtho(false, 1280, 720);
 
-    entityManager = new EntityManager();
     simulator = new Simulator();
 
     this.secureRandom = new SecureRandom();
 
-    for (int i = 0; i < 7; i++) {
-      Ant newAnt = new Ant(new Vector2(secureRandom.nextInt(700), secureRandom.nextInt(700)), Vector2.Zero);
-      entityManager.addEntity(newAnt);
+    for (int i = 0; i < 20; i++) {
+      Ant newAnt =
+          new Ant(new Vector2(secureRandom.nextInt(700), secureRandom.nextInt(500)), Vector2.Zero);
+      simulator.addEntity(newAnt);
       newAnt.addObserver(simulator);
     }
   }
@@ -61,15 +57,19 @@ public class GameScreen implements Screen {
     game.getBatch().begin();
     game.font.draw(
         game.getBatch(),
-        "FPS: "+ (int) Gdx.graphics.getFramesPerSecond(),
+        "FPS: " + (int) Gdx.graphics.getFramesPerSecond(),
         3,
         Gdx.graphics.getHeight() - 3);
-    game.font.draw(game.getBatch(), "Entities: " + entityManager.getEntities().size, 3, Gdx.graphics.getHeight() - 30);
+    game.font.draw(
+        game.getBatch(),
+        "Entities: " + simulator.getEntities().size(),
+        3,
+        Gdx.graphics.getHeight() - 30);
 
     // game.getBatch().draw(TextureManager.ANT_TEXTURE,
     // 0,0,TextureManager.ANT_TEXTURE.getWidth(),TextureManager.ANT_TEXTURE.getHeight());
 
-    for (BaseEntity entity : entityManager.getEntities()) {
+    for (BaseEntity entity : simulator.getEntities()) {
       entity.update();
       if (entity.isAlive()) {
         entity.render(game.getBatch());

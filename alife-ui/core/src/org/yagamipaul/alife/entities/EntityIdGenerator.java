@@ -1,7 +1,5 @@
 package org.yagamipaul.alife.entities;
-/**
- * TODO: Modify this strategy.
- */
+/** TODO: Modify this strategy. */
 public class EntityIdGenerator {
 
   private static int count = 0;
