@@ -3,8 +3,13 @@ package org.yagamipaul.alife.entities;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import lombok.Getter;
 
 public abstract class BaseEntity {
+
+  protected String name;
+
+  @Getter protected String id;
 
   protected Texture texture;
 
@@ -19,6 +24,7 @@ public abstract class BaseEntity {
   /** Health indicator of the entity */
   protected int health = 0;
 
+  /** Flag indicator of the entity's status */
   protected boolean alive = true;
 
   /**
@@ -32,6 +38,7 @@ public abstract class BaseEntity {
     this.position = position;
     this.direction = direction;
     this.health = 100;
+    this.id = EntityIdGenerator.createId();
   }
 
   /** Updates the state of the entity. */

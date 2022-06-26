@@ -64,6 +64,9 @@ project(":core") {
         compileOnly 'org.projectlombok:lombok:1.18.24'
         annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
+        implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+        implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.11'
+
         testCompileOnly 'org.projectlombok:lombok:1.18.24'
         testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
     }

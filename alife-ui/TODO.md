@@ -4,6 +4,8 @@
 * Cosas no vivas, comida? fuego?
 * ID de entidades
 * Persitencia de estado
-
+* Implementar listener en entidades
+* Archivo de configuracion
+* Limpieza en entity manager. 
 
 # Done
