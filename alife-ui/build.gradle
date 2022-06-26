@@ -7,12 +7,14 @@ buildscript {
         google()
     }
     dependencies {
-
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:6.7.2"
     }
 }
 
 allprojects {
+    apply plugin: "java"
     apply plugin: "eclipse"
+    apply plugin: "com.diffplug.spotless"
     version = '1.0'
     ext {
         appName = "alife-simulator"
@@ -32,6 +34,17 @@ allprojects {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
         maven { url "https://jitpack.io" }
+    }
+
+    spotless {
+        java {
+            encoding("UTF-8")
+            importOrder()
+            removeUnusedImports()
+            googleJavaFormat()
+            //licenseHeader '/* (C) $YEAR */' // or licenseHeaderFile
+        }
+        lineEndings 'GIT_ATTRIBUTES'
     }
 }
 

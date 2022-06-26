@@ -7,30 +7,30 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import org.yagamipaul.alife.screen.MainMenuScreen;
 
 public class MyGdxGame extends Game {
-	private SpriteBatch batch;
-	public BitmapFont font;
+  private SpriteBatch batch;
+  public BitmapFont font;
 
-	Texture img;
-	
-	@Override
-	public void create () {
-		batch = new SpriteBatch();
-		font = new BitmapFont();
-		this.setScreen(new MainMenuScreen(this));
-	}
+  Texture img;
 
-	@Override
-	public void render () {
-		super.render();
-	}
-	
-	@Override
-	public void dispose () {
-		batch.dispose();
-		font.dispose();
-	}
+  @Override
+  public void create() {
+    batch = new SpriteBatch();
+    font = new BitmapFont();
+    this.setScreen(new MainMenuScreen(this));
+  }
 
-	public SpriteBatch getBatch() {
-		return batch;
-	}
+  @Override
+  public void render() {
+    super.render();
+  }
+
+  @Override
+  public void dispose() {
+    batch.dispose();
+    font.dispose();
+  }
+
+  public SpriteBatch getBatch() {
+    return batch;
+  }
 }
