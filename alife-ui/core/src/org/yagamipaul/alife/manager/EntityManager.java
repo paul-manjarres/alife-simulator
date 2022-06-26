@@ -7,16 +7,10 @@ public class EntityManager {
 
     private Array<BaseEntity> entities;
 
-    /**
-     *
-     */
     public EntityManager() {
         this.entities = new Array<BaseEntity>();
     }
 
-    /**
-     * @return
-     */
     public Array<BaseEntity> getEntities() {
         return entities;
     }

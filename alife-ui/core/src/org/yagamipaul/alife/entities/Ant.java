@@ -12,6 +12,7 @@ public class Ant extends BaseEntity{
 
     @Override
     public void update() {
+        this.decreaseHealth(1);
 
     }
 }

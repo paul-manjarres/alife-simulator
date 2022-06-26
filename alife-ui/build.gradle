@@ -1,6 +1,4 @@
 buildscript {
-    
-
     repositories {
         mavenLocal()
         mavenCentral()
@@ -9,14 +7,12 @@ buildscript {
         google()
     }
     dependencies {
-        
 
     }
 }
 
 allprojects {
     apply plugin: "eclipse"
-
     version = '1.0'
     ext {
         appName = "alife-simulator"
@@ -41,22 +37,21 @@ allprojects {
 
 project(":desktop") {
     apply plugin: "java-library"
-
-
     dependencies {
         implementation project(":core")
         api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        
     }
 }
 
 project(":core") {
     apply plugin: "java-library"
-
-
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        
+        compileOnly 'org.projectlombok:lombok:1.18.24'
+        annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+        testCompileOnly 'org.projectlombok:lombok:1.18.24'
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
     }
 }

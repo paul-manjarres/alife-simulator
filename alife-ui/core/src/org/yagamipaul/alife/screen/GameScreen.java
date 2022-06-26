@@ -20,7 +20,7 @@ public class GameScreen implements Screen {
 
     private EntityManager entityManager;
 
-    public GameScreen(MyGdxGame game){
+    public GameScreen(MyGdxGame game) {
         this.game = game;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);
@@ -28,8 +28,8 @@ public class GameScreen implements Screen {
         entityManager = new EntityManager();
 
 
-        for (int i = 0; i <7; i++) {
-            Ant newAnt = new Ant(new Vector2(100+i*100, 20+i*100), Vector2.Zero);
+        for (int i = 0; i < 7; i++) {
+            Ant newAnt = new Ant(new Vector2(100 + i * 100, 20 + i * 100), Vector2.Zero);
             entityManager.addEntity(newAnt);
         }
 
@@ -55,12 +55,20 @@ public class GameScreen implements Screen {
         game.getBatch().setProjectionMatrix(camera.combined);
 
         game.getBatch().begin();
+        game.font.draw(game.getBatch(), (int) Gdx.graphics.getFramesPerSecond()
+
+                + " fps", 3, Gdx.graphics.getHeight() - 3);
         game.font.draw(game.getBatch(), "Entities: " + entityManager.getEntities().size, 0, 480);
 
         //game.getBatch().draw(TextureManager.ANT_TEXTURE, 0,0,TextureManager.ANT_TEXTURE.getWidth(),TextureManager.ANT_TEXTURE.getHeight());
 
         for (BaseEntity entity : entityManager.getEntities()) {
-            entity.render(game.getBatch());
+            entity.update();
+            if (entity.isAlive()) {
+                entity.render(game.getBatch());
+                game.font.draw(game.getBatch(), "Life: " + entity.getHealth(), entity.getPosition().x, entity.getPosition().y + 100);
+            }
+
         }
 
         game.getBatch().end();
