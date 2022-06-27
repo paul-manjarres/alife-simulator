@@ -1,5 +1,6 @@
 package org.yagamipaul.alife.entities;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -61,6 +62,7 @@ public abstract class BaseEntity implements Observable {
     float originX = width / 2;
     float originY = height / 2;
 
+    sb.setColor(Color.CYAN);
     sb.draw(
         this.texture,
         x,
@@ -78,6 +80,7 @@ public abstract class BaseEntity implements Observable {
         height,
         false,
         false);
+    sb.setColor(Color.WHITE);
   }
 
   public int increaseHealth(int value) {

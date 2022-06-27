@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import java.security.SecureRandom;
 import org.yagamipaul.alife.MyGdxGame;
@@ -50,38 +52,32 @@ public class GameScreen implements Screen {
     // tell the camera to update its matrices.
     camera.update();
 
-    // tell the SpriteBatch to render in the
-    // coordinate system specified by the camera.
-    game.getBatch().setProjectionMatrix(camera.combined);
+    SpriteBatch batch = game.getBatch();
+    BitmapFont font = game.font;
+    int fps = (int) Gdx.graphics.getFramesPerSecond();
 
-    game.getBatch().begin();
-    game.font.draw(
-        game.getBatch(),
-        "FPS: " + (int) Gdx.graphics.getFramesPerSecond(),
-        3,
-        Gdx.graphics.getHeight() - 3);
-    game.font.draw(
-        game.getBatch(),
-        "Entities: " + simulator.getEntities().size(),
-        3,
-        Gdx.graphics.getHeight() - 30);
+    batch.setProjectionMatrix(camera.combined);
+    batch.begin();
 
-    // game.getBatch().draw(TextureManager.ANT_TEXTURE,
-    // 0,0,TextureManager.ANT_TEXTURE.getWidth(),TextureManager.ANT_TEXTURE.getHeight());
+    font.draw(batch, "FPS: " + fps, 3, Gdx.graphics.getHeight() - 3);
+
+    game.font.draw(
+        batch, "Entities: " + simulator.getEntities().size(), 3, Gdx.graphics.getHeight() - 30);
 
     for (BaseEntity entity : simulator.getEntities()) {
       entity.update();
       if (entity.isAlive()) {
-        entity.render(game.getBatch());
-        game.font.draw(
-            game.getBatch(),
+        entity.render(batch);
+
+        font.draw(
+            batch,
             "Life: " + entity.getHealth(),
             entity.getPosition().x,
             entity.getPosition().y + 100);
       }
     }
 
-    game.getBatch().end();
+    batch.end();
   }
 
   @Override

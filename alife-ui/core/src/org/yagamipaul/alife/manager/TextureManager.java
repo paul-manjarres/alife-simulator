@@ -5,5 +5,5 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class TextureManager {
 
-  public static Texture ANT_TEXTURE = new Texture(Gdx.files.internal("ball.png"));
+  public static Texture CIRCLE_TEXTURE = new Texture(Gdx.files.internal("circle-64.png"));
 }

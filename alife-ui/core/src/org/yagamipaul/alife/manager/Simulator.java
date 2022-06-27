@@ -35,5 +35,12 @@ public class Simulator implements PropertyChangeListener {
   @Override
   public void propertyChange(PropertyChangeEvent evt) {
     log.info("Change: {}", evt);
+
+    // If entity died, remove listener and remove it from entity list.
+    if (evt.getPropertyName().equals("alive") && evt.getNewValue().equals(false)) {
+      BaseEntity entity = (BaseEntity) evt.getSource();
+      entity.removeObserver(this);
+      this.entities.remove(entity.getId());
+    }
   }
 }

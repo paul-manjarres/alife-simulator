@@ -42,6 +42,7 @@ allprojects {
             importOrder()
             removeUnusedImports()
             googleJavaFormat()
+            trimTrailingWhitespace()
             //licenseHeader '/* (C) $YEAR */' // or licenseHeaderFile
         }
         lineEndings 'GIT_ATTRIBUTES'
