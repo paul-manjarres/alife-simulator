@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import java.security.SecureRandom;
 import org.yagamipaul.alife.MyGdxGame;
@@ -22,11 +23,15 @@ public class GameScreen implements Screen {
   private Simulator simulator;
 
   private SecureRandom secureRandom;
+  Matrix4 uiMatrix;
 
   public GameScreen(MyGdxGame game) {
     this.game = game;
     camera = new OrthographicCamera();
     camera.setToOrtho(false, 1280, 720);
+
+    uiMatrix = camera.combined.cpy();
+    uiMatrix.setToOrtho2D(0, 0, 1280, 720);
 
     simulator = new Simulator();
 
@@ -51,6 +56,7 @@ public class GameScreen implements Screen {
 
     // tell the camera to update its matrices.
     camera.update();
+    camera.zoom += 0.05f * Gdx.graphics.getDeltaTime();
 
     SpriteBatch batch = game.getBatch();
     BitmapFont font = game.font;
@@ -58,12 +64,6 @@ public class GameScreen implements Screen {
 
     batch.setProjectionMatrix(camera.combined);
     batch.begin();
-
-    font.draw(batch, "FPS: " + fps, 3, Gdx.graphics.getHeight() - 3);
-
-    game.font.draw(
-        batch, "Entities: " + simulator.getEntities().size(), 3, Gdx.graphics.getHeight() - 30);
-
     for (BaseEntity entity : simulator.getEntities()) {
       entity.update();
       if (entity.isAlive()) {
@@ -78,6 +78,16 @@ public class GameScreen implements Screen {
     }
 
     batch.end();
+
+
+    batch.begin();
+    batch.setProjectionMatrix(uiMatrix);
+    font.draw(batch, "FPS: " + fps, 3, Gdx.graphics.getHeight() - 3);
+
+    font.draw(
+            batch, "Entities: " + simulator.getEntities().size(), 3, Gdx.graphics.getHeight() - 30);
+    batch.end();
+
   }
 
   @Override
