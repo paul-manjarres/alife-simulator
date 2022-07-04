@@ -6,7 +6,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
+import org.yagamipaul.alife.entities.components.ProximitySensor;
+import org.yagamipaul.alife.entities.components.Sensor;
 
 public abstract class BaseEntity implements Observable {
 
@@ -18,7 +22,7 @@ public abstract class BaseEntity implements Observable {
 
   protected Vector2 position;
 
-  protected Vector2 direction;
+  @Getter protected Vector2 direction;
 
   protected float velocity;
 
@@ -31,6 +35,8 @@ public abstract class BaseEntity implements Observable {
   protected boolean alive = true;
 
   private PropertyChangeSupport pcSupport;
+
+  @Getter private List<Sensor> sensors;
 
   /**
    * @param texture
@@ -45,6 +51,8 @@ public abstract class BaseEntity implements Observable {
     this.health = 100;
     this.id = EntityIdGenerator.createId();
     this.pcSupport = new PropertyChangeSupport(this);
+    this.sensors = new ArrayList<>();
+    this.sensors.add(new ProximitySensor(this.position));
   }
 
   /** Updates the state of the entity. */
@@ -57,8 +65,8 @@ public abstract class BaseEntity implements Observable {
     float y = this.position.y;
     int width = this.texture.getWidth();
     int height = this.texture.getHeight();
-    float scaleX = 0.5f;
-    float scaleY = 0.5f;
+    float scaleX = 1.0f;
+    float scaleY = 1.0f;
     float originX = width / 2;
     float originY = height / 2;
 

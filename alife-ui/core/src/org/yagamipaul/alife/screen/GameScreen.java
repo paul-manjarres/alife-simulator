@@ -2,16 +2,21 @@ package org.yagamipaul.alife.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import java.security.SecureRandom;
 import org.yagamipaul.alife.MyGdxGame;
-import org.yagamipaul.alife.entities.Ant;
 import org.yagamipaul.alife.entities.BaseEntity;
+import org.yagamipaul.alife.entities.Organism;
+import org.yagamipaul.alife.entities.Renderable;
+import org.yagamipaul.alife.entities.components.Sensor;
 import org.yagamipaul.alife.manager.Simulator;
 
 public class GameScreen implements Screen {
@@ -37,11 +42,12 @@ public class GameScreen implements Screen {
 
     this.secureRandom = new SecureRandom();
 
-    for (int i = 0; i < 20; i++) {
-      Ant newAnt =
-          new Ant(new Vector2(secureRandom.nextInt(700), secureRandom.nextInt(500)), Vector2.Zero);
-      simulator.addEntity(newAnt);
-      newAnt.addObserver(simulator);
+    for (int i = 0; i < 4; i++) {
+      Organism newOrganism =
+          new Organism(
+              new Vector2(secureRandom.nextInt(700), secureRandom.nextInt(500)), Vector2.Zero);
+      simulator.addEntity(newOrganism);
+      newOrganism.addObserver(simulator);
     }
   }
 
@@ -56,7 +62,19 @@ public class GameScreen implements Screen {
 
     // tell the camera to update its matrices.
     camera.update();
-    camera.zoom += 0.05f * Gdx.graphics.getDeltaTime();
+    // camera.zoom += 0.05f * Gdx.graphics.getDeltaTime();
+
+    ShapeRenderer sr = game.getShapeRenderer();
+    sr.setColor(Color.WHITE);
+    sr.setProjectionMatrix(camera.combined);
+    sr.begin(ShapeRenderer.ShapeType.Filled);
+
+    for (BaseEntity entity : simulator.getEntities()) {
+      for (Sensor s : entity.getSensors()) {
+        ((Renderable) s).render(sr);
+      }
+    }
+    sr.end();
 
     SpriteBatch batch = game.getBatch();
     BitmapFont font = game.font;
@@ -74,20 +92,24 @@ public class GameScreen implements Screen {
             "Life: " + entity.getHealth(),
             entity.getPosition().x,
             entity.getPosition().y + 100);
+
+        float angle =
+            MathUtils.radiansToDegrees
+                * MathUtils.atan2(entity.getDirection().y, entity.getDirection().x);
+
+        font.draw(batch, "Angle: " + angle, entity.getPosition().x, entity.getPosition().y + 80);
       }
     }
 
     batch.end();
-
 
     batch.begin();
     batch.setProjectionMatrix(uiMatrix);
     font.draw(batch, "FPS: " + fps, 3, Gdx.graphics.getHeight() - 3);
 
     font.draw(
-            batch, "Entities: " + simulator.getEntities().size(), 3, Gdx.graphics.getHeight() - 30);
+        batch, "Entities: " + simulator.getEntities().size(), 3, Gdx.graphics.getHeight() - 30);
     batch.end();
-
   }
 
   @Override

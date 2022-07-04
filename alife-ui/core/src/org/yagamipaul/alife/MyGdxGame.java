@@ -4,10 +4,13 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import org.yagamipaul.alife.screen.MainMenuScreen;
 
 public class MyGdxGame extends Game {
   private SpriteBatch batch;
+
+  private ShapeRenderer shapeRenderer;
   public BitmapFont font;
 
   Texture img;
@@ -15,6 +18,7 @@ public class MyGdxGame extends Game {
   @Override
   public void create() {
     batch = new SpriteBatch();
+    shapeRenderer = new ShapeRenderer();
     font = new BitmapFont();
     this.setScreen(new MainMenuScreen(this));
   }
@@ -32,5 +36,9 @@ public class MyGdxGame extends Game {
 
   public SpriteBatch getBatch() {
     return batch;
+  }
+
+  public ShapeRenderer getShapeRenderer() {
+    return shapeRenderer;
   }
 }

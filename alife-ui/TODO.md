@@ -1,4 +1,11 @@
 # To Do
+
+* Definir interfaz para sensores
+* Dibujar sensor por cada entidad.
+* 
+
+
+
 * Necesidades básicas, hambre, frio?
 * Sensores?, vision, olfato, gusto.
 * Cosas no vivas, comida? fuego?
