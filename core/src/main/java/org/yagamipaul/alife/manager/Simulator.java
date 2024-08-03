@@ -12,7 +12,7 @@ import org.yagamipaul.alife.entities.BaseEntity;
 @Slf4j
 public class Simulator implements PropertyChangeListener {
 
-  private Map<String, BaseEntity> entities;
+  private final Map<String, BaseEntity> entities;
 
   public Simulator() {
     this.entities = new ConcurrentHashMap<>();
@@ -29,7 +29,7 @@ public class Simulator implements PropertyChangeListener {
   }
 
   public List<BaseEntity> getEntities() {
-    return new ArrayList<BaseEntity>(this.entities.values());
+    return new ArrayList<>(this.entities.values());
   }
 
   @Override

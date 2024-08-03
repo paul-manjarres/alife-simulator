@@ -3,145 +3,95 @@ package org.yagamipaul.alife.entities;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import lombok.Getter;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
-import java.util.List;
-import lombok.Getter;
-import org.yagamipaul.alife.entities.components.ProximitySensor;
-import org.yagamipaul.alife.entities.components.Sensor;
 
 public abstract class BaseEntity implements Observable {
 
-  protected String name;
+    @Getter
+    protected String id;
+    protected String name;
+    protected Texture texture;
+    @Getter
+    protected Vector2 position;
+    @Getter
+    protected Vector2 direction;
+    protected float velocity;
+    protected float rotation = 0.0f;
+    protected PropertyChangeSupport pcSupport;
+    @Getter protected Rectangle rect;
 
-  @Getter protected String id;
 
-  protected Texture texture;
-
-  protected Vector2 position;
-
-  @Getter protected Vector2 direction;
-
-  protected float velocity;
-
-  protected float rotation = 0.0f;
-
-  /** Health indicator of the entity */
-  protected int health = 0;
-
-  /** Flag indicator of the entity's status */
-  protected boolean alive = true;
-
-  private PropertyChangeSupport pcSupport;
-
-  @Getter private List<Sensor> sensors;
-
-  /**
-   * @param texture
-   * @param position
-   * @param direction
-   */
-  public BaseEntity(Texture texture, Vector2 position, Vector2 direction) {
-    super();
-    this.texture = texture;
-    this.position = position;
-    this.direction = direction;
-    this.health = 100;
-    this.id = EntityIdGenerator.createId();
-    this.pcSupport = new PropertyChangeSupport(this);
-    this.sensors = new ArrayList<>();
-    this.sensors.add(new ProximitySensor(this.position));
-  }
-
-  /** Updates the state of the entity. */
-  public abstract void update();
-
-  /** */
-  public void render(SpriteBatch sb) {
-
-    float x = this.position.x;
-    float y = this.position.y;
-    int width = this.texture.getWidth();
-    int height = this.texture.getHeight();
-    float scaleX = 1.0f;
-    float scaleY = 1.0f;
-    float originX = width / 2;
-    float originY = height / 2;
-
-    sb.setColor(Color.CYAN);
-    sb.draw(
-        this.texture,
-        x,
-        y,
-        originX,
-        originY,
-        width,
-        height,
-        scaleX,
-        scaleY,
-        this.rotation,
-        0,
-        0,
-        width,
-        height,
-        false,
-        false);
-    sb.setColor(Color.WHITE);
-  }
-
-  public int increaseHealth(int value) {
-    if (!alive) {
-      return this.health;
+    /**
+     * @param texture
+     * @param position
+     * @param direction
+     */
+    public BaseEntity(Texture texture, Vector2 position, Vector2 direction) {
+        super();
+        this.texture = texture;
+        this.position = position;
+        this.direction = direction;
+        this.id = EntityIdGenerator.createId();
+        this.pcSupport = new PropertyChangeSupport(this);
+        this.rect = new Rectangle(this.position.x - texture.getWidth() / 2,
+          this.position.y - texture.getHeight() / 2,
+          texture.getWidth(), texture.getHeight());
     }
 
-    if (value < 0) {
-      value = 0;
+    /**
+     * Updates the state of the entity.
+     */
+    public abstract void update();
+
+    /**
+     *
+     */
+    public void render(SpriteBatch sb) {
+
+        float x = this.position.x - texture.getWidth() / 2;
+        float y = this.position.y - texture.getHeight() / 2;
+        int width = this.texture.getWidth();
+        int height = this.texture.getHeight();
+        float scaleX = 1.0f;
+        float scaleY = 1.0f;
+        float originX = (float) width / 2;
+        float originY = (float) height / 2;
+
+        //sb.setColor(Color.CYAN);
+        sb.draw(
+            this.texture,
+            x,
+            y,
+            originX,
+            originY,
+            width,
+            height,
+            scaleX,
+            scaleY,
+            this.rotation,
+            0,
+            0,
+            width,
+            height,
+            false,
+            false);
+        sb.setColor(Color.WHITE);
     }
-    this.health += value;
-    return this.health;
-  }
 
-  public int decreaseHealth(int value) {
-    if (!alive) {
-      return this.health;
+
+    @Override
+    public void addObserver(PropertyChangeListener pcl) {
+        this.pcSupport.addPropertyChangeListener(pcl);
     }
-    if (value < 0) {
-      value = 0;
+
+    @Override
+    public void removeObserver(PropertyChangeListener pcl) {
+        this.pcSupport.removePropertyChangeListener(pcl);
     }
-    this.health -= value;
-    if (this.health <= 0) {
-      die();
-    }
-    return this.health;
-  }
 
-  private void die() {
-    this.health = 0;
-    this.alive = false;
-    pcSupport.firePropertyChange("alive", true, false);
-  }
-
-  @Override
-  public void addObserver(PropertyChangeListener pcl) {
-    this.pcSupport.addPropertyChangeListener(pcl);
-  }
-
-  @Override
-  public void removeObserver(PropertyChangeListener pcl) {
-    this.pcSupport.removePropertyChangeListener(pcl);
-  }
-
-  public int getHealth() {
-    return health;
-  }
-
-  public Vector2 getPosition() {
-    return position;
-  }
-
-  public boolean isAlive() {
-    return alive;
-  }
 }
