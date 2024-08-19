@@ -4,7 +4,7 @@ import org.yagamipaul.alife.entities.BaseEntity;
 
 public interface Sensor {
 
-  boolean isTriggered();
+    boolean isTriggered();
 
-  void trigger(BaseEntity triggerEntity);
+    void trigger(BaseEntity triggerEntity);
 }

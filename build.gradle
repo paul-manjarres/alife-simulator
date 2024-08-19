@@ -71,8 +71,11 @@ subprojects {
       encoding("UTF-8")
       importOrder()
       removeUnusedImports()
-      googleJavaFormat()
+      palantirJavaFormat()
       trimTrailingWhitespace()
+      indentWithSpaces()
+      endWithNewline()
+      formatAnnotations()
       //licenseHeader '/* (C) $YEAR */' // or licenseHeaderFile
     }
     lineEndings 'GIT_ATTRIBUTES'

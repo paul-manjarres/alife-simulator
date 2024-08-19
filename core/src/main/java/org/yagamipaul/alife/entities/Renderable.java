@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public interface Renderable {
 
-  void render(SpriteBatch sb);
+    void render(SpriteBatch sb);
 
-  void render(ShapeRenderer sr);
+    void render(ShapeRenderer sr);
 }

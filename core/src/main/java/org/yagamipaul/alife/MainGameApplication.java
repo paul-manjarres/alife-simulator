@@ -1,8 +1,6 @@
 package org.yagamipaul.alife;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,32 +10,32 @@ import org.yagamipaul.alife.screen.MainMenuScreen;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class MainGameApplication extends Game {
-  @Getter
-  private SpriteBatch batch;
+    @Getter
+    private SpriteBatch batch;
 
-  @Getter
-  private ShapeRenderer shapeRenderer;
-  public BitmapFont font;
+    @Getter
+    private ShapeRenderer shapeRenderer;
 
-  Texture img;
+    public BitmapFont font;
 
-  @Override
-  public void create(){
-    batch = new SpriteBatch();
-    shapeRenderer = new ShapeRenderer();
-    font = new BitmapFont();
-    this.setScreen(new MainMenuScreen(this));
-  }
+    Texture img;
 
-  @Override
-  public void render() {
-    super.render();
-  }
+    @Override
+    public void create() {
+        batch = new SpriteBatch();
+        shapeRenderer = new ShapeRenderer();
+        font = new BitmapFont();
+        this.setScreen(new MainMenuScreen(this));
+    }
 
-  @Override
-  public void dispose() {
-    batch.dispose();
-    font.dispose();
-  }
+    @Override
+    public void render() {
+        super.render();
+    }
 
+    @Override
+    public void dispose() {
+        batch.dispose();
+        font.dispose();
+    }
 }
