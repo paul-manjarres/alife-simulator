@@ -136,7 +136,7 @@ public class GameScreen implements Screen {
         batch.begin();
 
         for (BaseEntity entity : simulator.getEntities()) {
-            entity.update();
+            entity.update(delta);
 
             if (entity instanceof NonLiving) {
                 font.draw(
@@ -168,9 +168,6 @@ public class GameScreen implements Screen {
             }
         }
 
-        //        batch.end();
-        //
-        //        batch.begin();
         batch.setProjectionMatrix(uiMatrix);
         font.draw(batch, "FPS: " + fps, 3, Gdx.graphics.getHeight() - 3);
         font.draw(batch, "Entities: " + simulator.getEntities().size(), 3, Gdx.graphics.getHeight() - 30f);

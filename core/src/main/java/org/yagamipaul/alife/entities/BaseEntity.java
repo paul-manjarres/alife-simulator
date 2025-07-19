@@ -54,7 +54,7 @@ public abstract class BaseEntity implements Observable {
     }
 
     /** Updates the state of the entity. */
-    public abstract void update();
+    public abstract void update(float delta);
 
     /** */
     public void render(SpriteBatch sb) {

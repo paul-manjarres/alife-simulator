@@ -40,10 +40,21 @@ public class Organism extends BaseEntity {
     }
 
     @Override
-    public void update() {
+    public void update(float delta) {
 
-        this.position.add(this.direction);
+        float factor = 50f*delta;
+
+
+        // Se debe conectar el sensor.
+        // Si hay detectado algo en la cercania, dirigirse a el
+
+        // en colision, se elimina el obstaculo si es comida
+
+
+
+        this.position.add(this.direction.x*factor, this.direction.y*factor);
         this.rect.setPosition(this.position.x - getRect().width / 2, this.position.y - getRect().height / 2);
+
 
         int random = new SecureRandom().nextInt(100);
         if (random < 10) {
@@ -71,17 +82,17 @@ public class Organism extends BaseEntity {
         pcSupport.firePropertyChange("alive", true, false);
     }
 
-    public int increaseHealth(int value) {
-        if (!alive) {
-            return this.health;
-        }
-
-        if (value < 0) {
-            value = 0;
-        }
-        this.health += value;
-        return this.health;
-    }
+//    public int increaseHealth(int value) {
+//        if (!alive) {
+//            return this.health;
+//        }
+//
+//        if (value < 0) {
+//            value = 0;
+//        }
+//        this.health += value;
+//        return this.health;
+//    }
 
     @Override
     public String toString() {

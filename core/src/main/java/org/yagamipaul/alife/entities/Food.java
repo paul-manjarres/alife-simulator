@@ -11,5 +11,5 @@ public class Food extends NonLiving {
     }
 
     @Override
-    public void update() {}
+    public void update(float delta) {}
 }
