@@ -33,17 +33,11 @@ public abstract class BaseEntity implements Observable {
 
     protected int size;
 
-    /**
-     * @param texture
-     * @param position
-     * @param direction
-     */
     protected BaseEntity(Texture texture, Vector2 position, Vector2 direction) {
         super();
         this.texture = texture;
         this.position = position;
         this.direction = direction;
-
         this.id = EntityIdGenerator.createId();
         this.pcSupport = new PropertyChangeSupport(this);
         this.rect = new Rectangle(
@@ -66,8 +60,6 @@ public abstract class BaseEntity implements Observable {
         int height = this.texture.getHeight();
         float scaleX = 1.0f;
         float scaleY = 1.0f;
-        //        float originX = (float) width / 2;
-        //        float originY = (float) height / 2;
         float originX = 0f;
         float originY = 0f;
 
@@ -88,6 +80,7 @@ public abstract class BaseEntity implements Observable {
                 height,
                 false,
                 false);
+
         sb.setColor(Color.WHITE);
     }
 

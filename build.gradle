@@ -82,6 +82,14 @@ subprojects {
       //licenseHeader '/* (C) $YEAR */' // or licenseHeaderFile
     }
   }
+
+  afterEvaluate {
+    tasks.spotlessCheck {
+      dependsOn(tasks.spotlessApply)
+    }
+  }
 }
+
+
 
 eclipse.project.name = 'alife-sim' + '-parent'

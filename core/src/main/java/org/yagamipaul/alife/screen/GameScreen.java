@@ -19,19 +19,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yagamipaul.alife.MainGameApplication;
 import org.yagamipaul.alife.entities.*;
+import org.yagamipaul.alife.entities.components.Sensor;
 import org.yagamipaul.alife.manager.Simulator;
 import org.yagamipaul.alife.utils.VectorUtils;
 
 public class GameScreen implements Screen {
 
     private static final Logger log = LoggerFactory.getLogger(GameScreen.class);
+
     final MainGameApplication game;
 
-    OrthographicCamera camera;
+    private OrthographicCamera camera;
+    private final Simulator simulator;
+    private final SecureRandom secureRandom;
+    private static final boolean DEBUG_MODE = false;
 
-    private Simulator simulator;
-
-    private SecureRandom secureRandom;
     Matrix4 uiMatrix;
 
     public GameScreen(MainGameApplication game) {
@@ -56,9 +58,6 @@ public class GameScreen implements Screen {
                         new Vector2(secureRandom.nextInt(700) - 350, secureRandom.nextInt(500) - 250), Vector2.Zero);
             }
 
-            //            Organism newOrganism = new Organism(
-            //                    new Vector2(secureRandom.nextInt(700) - 350, secureRandom.nextInt(500) - 250),
-            // Vector2.Zero);
             simulator.addEntity(newOrganism);
             newOrganism.addObserver(simulator);
         }
@@ -88,16 +87,15 @@ public class GameScreen implements Screen {
         sr.setColor(Color.WHITE);
         sr.setProjectionMatrix(camera.combined);
 
-        drawDebugLine(Vector2.Zero, new Vector2(500, 500), camera.combined, sr);
+        if(DEBUG_MODE) {
+            drawDebugLine(Vector2.Zero, new Vector2(500, 500), camera.combined, sr);
+        }
 
         if (!Gdx.input.isTouched() && isTouched) {
             isTouched = false;
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
-            //            Organism newOrganism = new Organism(
-            //                    new Vector2(secureRandom.nextInt(700) - 350, secureRandom.nextInt(500) - 250),
-            // Vector2.Zero);
             Organism newOrganism = null;
             if (secureRandom.nextDouble() <= 0.5d) {
                 newOrganism = new Carnivorous(
@@ -137,14 +135,16 @@ public class GameScreen implements Screen {
         }
 
         // Draw sensors
-        //        for (BaseEntity entity : simulator.getEntities()) {
-        //            if (entity instanceof Organism o) {
-        //                for (Sensor s : o.getSensors()) {
-        //                    ((Renderable) s).render(sr);
-        //                }
-        //            }
-        //            entity.renderRect(sr);
-        //        }
+        if (DEBUG_MODE) {
+            for (BaseEntity entity : simulator.getEntities()) {
+                if (entity instanceof Organism o) {
+                    for (Sensor s : o.getSensors()) {
+                        ((Renderable) s).render(sr);
+                    }
+                }
+                entity.renderRect(sr);
+            }
+        }
 
         sr.end();
 
@@ -208,18 +208,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {}
-
-    //    public static void DrawDebugLine(Vector2 start, Vector2 end, int lineWidth, Color color,
-    // Matrix4 projectionMatrix)
-    //    {
-    //        Gdx.gl.glLineWidth(lineWidth);
-    //        debugRenderer.setProjectionMatrix(projectionMatrix);
-    //        debugRenderer.begin(ShapeRenderer.ShapeType.Line);
-    //        debugRenderer.setColor(color);
-    //        debugRenderer.line(start, end);
-    //        debugRenderer.end();
-    //        Gdx.gl.glLineWidth(1);
-    //    }
 
     public static void drawDebugLine(Vector2 start, Vector2 end, Matrix4 projectionMatrix, ShapeRenderer renderer) {
         Gdx.gl.glLineWidth(2);
