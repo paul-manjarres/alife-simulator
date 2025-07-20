@@ -1,6 +1,8 @@
 Potato.png
 ball.png
+carnivoro.png
 circle-64.png
+hervivoro.png
 libgdx.png
 triangle-64-2.png
 triangle-64.png

@@ -22,8 +22,8 @@ sourceSets.main.resources.srcDirs += [ rootProject.file('assets').path ]
 mainClassName = 'org.yagamipaul.alife.lwjgl3.Lwjgl3Launcher'
 application.setMainClass(mainClassName)
 eclipse.project.name = appName + '-lwjgl3'
-java.sourceCompatibility = 21
-java.targetCompatibility = 21
+java.sourceCompatibility = 24
+java.targetCompatibility = 24
 if (JavaVersion.current().isJava9Compatible()) {
   compileJava.options.release.set(24)
 }

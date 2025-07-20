@@ -38,7 +38,7 @@ public abstract class BaseEntity implements Observable {
      * @param position
      * @param direction
      */
-    public BaseEntity(Texture texture, Vector2 position, Vector2 direction) {
+    protected BaseEntity(Texture texture, Vector2 position, Vector2 direction) {
         super();
         this.texture = texture;
         this.position = position;

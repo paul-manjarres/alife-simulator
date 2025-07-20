@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yagamipaul.alife.MainGameApplication;
 import org.yagamipaul.alife.entities.*;
-import org.yagamipaul.alife.entities.components.Sensor;
 import org.yagamipaul.alife.manager.Simulator;
 import org.yagamipaul.alife.utils.VectorUtils;
 
@@ -47,8 +46,19 @@ public class GameScreen implements Screen {
         this.secureRandom = new SecureRandom();
 
         for (int i = 0; i < 1; i++) {
-            Organism newOrganism = new Organism(
-                    new Vector2(secureRandom.nextInt(700) - 350, secureRandom.nextInt(500) - 250), Vector2.Zero);
+
+            Organism newOrganism = null;
+            if (secureRandom.nextDouble() <= 0.5d) {
+                newOrganism = new Carnivorous(
+                        new Vector2(secureRandom.nextInt(700) - 350, secureRandom.nextInt(500) - 250), Vector2.Zero);
+            } else {
+                newOrganism = new Herviborous(
+                        new Vector2(secureRandom.nextInt(700) - 350, secureRandom.nextInt(500) - 250), Vector2.Zero);
+            }
+
+            //            Organism newOrganism = new Organism(
+            //                    new Vector2(secureRandom.nextInt(700) - 350, secureRandom.nextInt(500) - 250),
+            // Vector2.Zero);
             simulator.addEntity(newOrganism);
             newOrganism.addObserver(simulator);
         }
@@ -85,8 +95,18 @@ public class GameScreen implements Screen {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
-            Organism newOrganism = new Organism(
-                    new Vector2(secureRandom.nextInt(700) - 350, secureRandom.nextInt(500) - 250), Vector2.Zero);
+            //            Organism newOrganism = new Organism(
+            //                    new Vector2(secureRandom.nextInt(700) - 350, secureRandom.nextInt(500) - 250),
+            // Vector2.Zero);
+            Organism newOrganism = null;
+            if (secureRandom.nextDouble() <= 0.5d) {
+                newOrganism = new Carnivorous(
+                        new Vector2(secureRandom.nextInt(700) - 350, secureRandom.nextInt(500) - 250), Vector2.Zero);
+            } else {
+                newOrganism = new Herviborous(
+                        new Vector2(secureRandom.nextInt(700) - 350, secureRandom.nextInt(500) - 250), Vector2.Zero);
+            }
+
             simulator.addEntity(newOrganism);
             newOrganism.addObserver(simulator);
         }
@@ -117,14 +137,14 @@ public class GameScreen implements Screen {
         }
 
         // Draw sensors
-        for (BaseEntity entity : simulator.getEntities()) {
-            if (entity instanceof Organism o) {
-                for (Sensor s : o.getSensors()) {
-                    ((Renderable) s).render(sr);
-                }
-            }
-            entity.renderRect(sr);
-        }
+        //        for (BaseEntity entity : simulator.getEntities()) {
+        //            if (entity instanceof Organism o) {
+        //                for (Sensor s : o.getSensors()) {
+        //                    ((Renderable) s).render(sr);
+        //                }
+        //            }
+        //            entity.renderRect(sr);
+        //        }
 
         sr.end();
 
@@ -153,7 +173,7 @@ public class GameScreen implements Screen {
                             batch,
                             "Id: " + org.getId() + " - Life: " + org.getHealth(),
                             (int) entity.getPosition().x,
-                            (int) entity.getPosition().y + 100);
+                            (int) entity.getPosition().y + 100f);
 
                     float angle = MathUtils.radiansToDegrees
                             * MathUtils.atan2(entity.getDirection().y, entity.getDirection().x);

@@ -23,11 +23,11 @@ public class Organism extends BaseEntity {
     @Getter
     protected List<Sensor> sensors;
 
-    protected boolean move = false;
-    protected Vector2 targetPosition = Vector2.Zero;
+    //    protected boolean move = false;
+    //    protected Vector2 targetPosition = Vector2.Zero;
 
     public Organism(Vector2 position, Vector2 direction) {
-        super(TextureManager.TRIANGLE_TEXTURE, position, direction);
+        super(TextureManager.CARNIVOROUS_TEXTURE, position, direction);
         this.velocity = 4.0f;
         var rnd = new SecureRandom();
         var angle = rnd.nextInt(360);
@@ -42,19 +42,13 @@ public class Organism extends BaseEntity {
     @Override
     public void update(float delta) {
 
-        float factor = 50f*delta;
-
-
+        float factor = 50f * delta;
         // Se debe conectar el sensor.
         // Si hay detectado algo en la cercania, dirigirse a el
-
         // en colision, se elimina el obstaculo si es comida
 
-
-
-        this.position.add(this.direction.x*factor, this.direction.y*factor);
+        this.position.add(this.direction.x * factor, this.direction.y * factor);
         this.rect.setPosition(this.position.x - getRect().width / 2, this.position.y - getRect().height / 2);
-
 
         int random = new SecureRandom().nextInt(100);
         if (random < 10) {
@@ -82,17 +76,17 @@ public class Organism extends BaseEntity {
         pcSupport.firePropertyChange("alive", true, false);
     }
 
-//    public int increaseHealth(int value) {
-//        if (!alive) {
-//            return this.health;
-//        }
-//
-//        if (value < 0) {
-//            value = 0;
-//        }
-//        this.health += value;
-//        return this.health;
-//    }
+    //    public int increaseHealth(int value) {
+    //        if (!alive) {
+    //            return this.health;
+    //        }
+    //
+    //        if (value < 0) {
+    //            value = 0;
+    //        }
+    //        this.health += value;
+    //        return this.health;
+    //    }
 
     @Override
     public String toString() {

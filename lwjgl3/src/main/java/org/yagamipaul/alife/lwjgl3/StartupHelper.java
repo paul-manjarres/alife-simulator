@@ -12,25 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-//Note, the above license and copyright applies to this file only.
+// Note, the above license and copyright applies to this file only.
 
 package org.yagamipaul.alife.lwjgl3;
-
-import com.badlogic.gdx.Version;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3NativesLoader;
-import org.lwjgl.system.macosx.LibC;
-import org.lwjgl.system.macosx.ObjCRuntime;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
 
 import static org.lwjgl.system.JNI.invokePPP;
 import static org.lwjgl.system.JNI.invokePPZ;
 import static org.lwjgl.system.macosx.ObjCRuntime.objc_getClass;
 import static org.lwjgl.system.macosx.ObjCRuntime.sel_getUid;
+
+import com.badlogic.gdx.Version;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3NativesLoader;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
+import org.lwjgl.system.macosx.LibC;
+import org.lwjgl.system.macosx.ObjCRuntime;
 
 /**
  * Adds some utilities to ensure that the JVM was started with the
@@ -77,18 +76,20 @@ public class StartupHelper {
         String osName = System.getProperty("os.name").toLowerCase();
         if (!osName.contains("mac")) {
             if (osName.contains("windows")) {
-// Here, we are trying to work around an issue with how LWJGL3 loads its extracted .dll files.
-// By default, LWJGL3 extracts to the directory specified by "java.io.tmpdir", which is usually the user's home.
-// If the user's name has non-ASCII (or some non-alphanumeric) characters in it, that would fail.
-// By extracting to the relevant "ProgramData" folder, which is usually "C:\ProgramData", we avoid this.
-// We also temporarily change the "user.name" property to one without any chars that would be invalid.
-// We revert our changes immediately after loading LWJGL3 natives.
+                // Here, we are trying to work around an issue with how LWJGL3 loads its extracted .dll files.
+                // By default, LWJGL3 extracts to the directory specified by "java.io.tmpdir", which is usually the
+                // user's home.
+                // If the user's name has non-ASCII (or some non-alphanumeric) characters in it, that would fail.
+                // By extracting to the relevant "ProgramData" folder, which is usually "C:\ProgramData", we avoid this.
+                // We also temporarily change the "user.name" property to one without any chars that would be invalid.
+                // We revert our changes immediately after loading LWJGL3 natives.
                 String programData = System.getenv("ProgramData");
-                if(programData == null) programData = "C:\\Temp\\"; // if ProgramData isn't set, try some fallback.
+                if (programData == null) programData = "C:\\Temp\\"; // if ProgramData isn't set, try some fallback.
                 String prevTmpDir = System.getProperty("java.io.tmpdir", programData);
                 String prevUser = System.getProperty("user.name", "libGDX_User");
                 System.setProperty("java.io.tmpdir", programData + "/libGDX-temp");
-                System.setProperty("user.name", ("User_" + prevUser.hashCode() + "_GDX" + Version.VERSION).replace('.', '_'));
+                System.setProperty(
+                        "user.name", ("User_" + prevUser.hashCode() + "_GDX" + Version.VERSION).replace('.', '_'));
                 Lwjgl3NativesLoader.load();
                 System.setProperty("java.io.tmpdir", prevTmpDir);
                 System.setProperty("user.name", prevUser);
@@ -103,10 +104,10 @@ public class StartupHelper {
 
         // Checks if we are already on the main thread, such as from running via Construo.
         long objc_msgSend = ObjCRuntime.getLibrary().getFunctionAddress("objc_msgSend");
-        long NSThread      = objc_getClass("NSThread");
+        long NSThread = objc_getClass("NSThread");
         long currentThread = invokePPP(NSThread, sel_getUid("currentThread"), objc_msgSend);
         boolean isMainThread = invokePPZ(currentThread, sel_getUid("isMainThread"), objc_msgSend);
-        if(isMainThread) return false;
+        if (isMainThread) return false;
 
         long pid = LibC.getpid();
 
@@ -119,7 +120,7 @@ public class StartupHelper {
         // avoids looping, but most certainly leads to a crash
         if ("true".equals(System.getProperty(JVM_RESTARTED_ARG))) {
             System.err.println(
-                "There was a problem evaluating whether the JVM was started with the -XstartOnFirstThread argument.");
+                    "There was a problem evaluating whether the JVM was started with the -XstartOnFirstThread argument.");
             return false;
         }
 
@@ -129,11 +130,11 @@ public class StartupHelper {
         // The following line is used assuming you target Java 8, the minimum for LWJGL3.
         String javaExecPath = System.getProperty("java.home") + separator + "bin" + separator + "java";
         // If targeting Java 9 or higher, you could use the following instead of the above line:
-        //String javaExecPath = ProcessHandle.current().info().command().orElseThrow();
+        // String javaExecPath = ProcessHandle.current().info().command().orElseThrow();
 
         if (!(new File(javaExecPath)).exists()) {
             System.err.println(
-                "A Java installation could not be found. If you are distributing this app with a bundled JRE, be sure to set the -XstartOnFirstThread argument manually!");
+                    "A Java installation could not be found. If you are distributing this app with a bundled JRE, be sure to set the -XstartOnFirstThread argument manually!");
             return false;
         }
 
@@ -160,10 +161,9 @@ public class StartupHelper {
                 ProcessBuilder processBuilder = new ProcessBuilder(jvmArgs);
                 processBuilder.start();
             } else {
-                Process process = (new ProcessBuilder(jvmArgs))
-                    .redirectErrorStream(true).start();
-                BufferedReader processOutput = new BufferedReader(
-                    new InputStreamReader(process.getInputStream()));
+                Process process =
+                        (new ProcessBuilder(jvmArgs)).redirectErrorStream(true).start();
+                BufferedReader processOutput = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String line;
 
                 while ((line = processOutput.readLine()) != null) {

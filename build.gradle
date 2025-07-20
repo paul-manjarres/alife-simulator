@@ -9,7 +9,7 @@ buildscript {
     maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
   }
   dependencies {
-   // classpath "com.diffplug.spotless:spotless-plugin-gradle:6.25.0"
+    classpath "com.diffplug.spotless:spotless-plugin-gradle:7.1.0"
   }
 }
 
@@ -28,32 +28,7 @@ allprojects {
 
 configure(subprojects) {
   apply plugin: 'java-library'
-  sourceCompatibility = 21
-  compileJava {
-    options.incremental = true
-  }
-  // From https://lyze.dev/2021/04/29/libGDX-Internal-Assets-List/
-  // The article can be helpful when using assets.txt in your project.
-  compileJava.doLast {
-    // projectFolder/assets
-    def assetsFolder = new File("${project.rootDir}/assets/")
-    // projectFolder/assets/assets.txt
-    def assetsFile = new File(assetsFolder, "assets.txt")
-    // delete that file in case we've already created it
-    assetsFile.delete()
-
-    // iterate through all files inside that folder
-    // convert it to a relative path
-    // and append it to the file assets.txt
-    fileTree(assetsFolder).collect { assetsFolder.relativePath(it) }.each {
-      assetsFile.append(it + "\n")
-    }
-  }
-}
-
-configure(subprojects) {
-  apply plugin: 'java-library'
-  sourceCompatibility = 21
+  sourceCompatibility = 24
 
   // From https://lyze.dev/2021/04/29/libGDX-Internal-Assets-List/
   // The article can be helpful when using assets.txt in your project.
@@ -92,40 +67,21 @@ subprojects {
     maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://jitpack.io' }
   }
+
+  apply plugin: "com.diffplug.spotless"
+  spotless {
+    java {
+      encoding("UTF-8")
+      importOrder()
+      removeUnusedImports()
+      palantirJavaFormat()
+      trimTrailingWhitespace()
+      indentWithSpaces()
+      endWithNewline()
+      formatAnnotations()
+      //licenseHeader '/* (C) $YEAR */' // or licenseHeaderFile
+    }
+  }
 }
 
 eclipse.project.name = 'alife-sim' + '-parent'
-
-
-//subprojects {
-//  version = '1.0.0'
-//  ext.appName = 'alife-sim'
-//  repositories {
-//    mavenCentral()
-//    maven { url 'https://s01.oss.sonatype.org' }
-//    // You may want to remove the following line if you have errors downloading dependencies.
-//    mavenLocal()
-//    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-//    maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
-//    maven { url 'https://jitpack.io' }
-//  }
-//
-//  apply plugin: 'java'
-//  apply plugin: "com.diffplug.spotless"
-//  spotless {
-//    java {
-//      encoding("UTF-8")
-//      importOrder()
-//      removeUnusedImports()
-//      palantirJavaFormat()
-//      trimTrailingWhitespace()
-//      indentWithSpaces()
-//      endWithNewline()
-//      formatAnnotations()
-//      //licenseHeader '/* (C) $YEAR */' // or licenseHeaderFile
-//    }
-//    lineEndings 'GIT_ATTRIBUTES'
-//  }
-//}
-//
-//eclipse.project.name = 'alife-sim' + '-parent'

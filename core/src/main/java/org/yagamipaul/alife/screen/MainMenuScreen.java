@@ -15,11 +15,11 @@ public class MainMenuScreen implements Screen {
     public MainMenuScreen(MainGameApplication game) {
         this.game = game;
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 800, 480);
+        camera.setToOrtho(false, 1280, 720);
     }
 
     @Override
-    public void show() {  }
+    public void show() {}
 
     @Override
     public void render(float delta) {
@@ -32,6 +32,7 @@ public class MainMenuScreen implements Screen {
         game.getBatch().begin();
         game.font.draw(game.getBatch(), "Artificial Life Simulation ", 100, 150);
         game.font.draw(game.getBatch(), "Jean Paul Manjarres C.", 100, 100);
+        // game.font.draw(game.getBatch(), "x:"+camera.viewportHeight+" - y:"+camera.viewportWidth, 100, 50);
         game.getBatch().end();
 
         if (Gdx.input.isTouched()) {
