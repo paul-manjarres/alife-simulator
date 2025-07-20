@@ -9,7 +9,7 @@ buildscript {
     maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
   }
   dependencies {
-    classpath "com.diffplug.spotless:spotless-plugin-gradle:6.25.0"
+    classpath "com.diffplug.spotless:spotless-plugin-gradle:7.1.0"
   }
 }
 
@@ -28,31 +28,35 @@ allprojects {
 
 configure(subprojects) {
   apply plugin: 'java-library'
-  sourceCompatibility = 21
-  compileJava {
-    options.incremental = true
-  }
+  sourceCompatibility = 24
+
   // From https://lyze.dev/2021/04/29/libGDX-Internal-Assets-List/
   // The article can be helpful when using assets.txt in your project.
-  compileJava.doLast {
+  tasks.register('generateAssetList') {
+    inputs.dir("${project.rootDir}/assets/")
     // projectFolder/assets
-    def assetsFolder = new File("${project.rootDir}/assets/")
+    File assetsFolder = new File("${project.rootDir}/assets/")
     // projectFolder/assets/assets.txt
-    def assetsFile = new File(assetsFolder, "assets.txt")
+    File assetsFile = new File(assetsFolder, "assets.txt")
     // delete that file in case we've already created it
     assetsFile.delete()
 
     // iterate through all files inside that folder
     // convert it to a relative path
     // and append it to the file assets.txt
-    fileTree(assetsFolder).collect { assetsFolder.relativePath(it) }.each {
+    fileTree(assetsFolder).collect { assetsFolder.relativePath(it) }.sort().each {
       assetsFile.append(it + "\n")
     }
+  }
+  processResources.dependsOn 'generateAssetList'
+
+  compileJava {
+    options.incremental = true
   }
 }
 
 subprojects {
-  version = '1.0.0'
+  version = "$projectVersion"
   ext.appName = 'alife-sim'
   repositories {
     mavenCentral()
@@ -64,19 +68,28 @@ subprojects {
     maven { url 'https://jitpack.io' }
   }
 
-  apply plugin: 'java'
   apply plugin: "com.diffplug.spotless"
   spotless {
     java {
       encoding("UTF-8")
       importOrder()
       removeUnusedImports()
-      googleJavaFormat()
+      palantirJavaFormat()
       trimTrailingWhitespace()
+      indentWithSpaces()
+      endWithNewline()
+      formatAnnotations()
       //licenseHeader '/* (C) $YEAR */' // or licenseHeaderFile
     }
-    lineEndings 'GIT_ATTRIBUTES'
+  }
+
+  afterEvaluate {
+    tasks.spotlessCheck {
+      dependsOn(tasks.spotlessApply)
+    }
   }
 }
+
+
 
 eclipse.project.name = 'alife-sim' + '-parent'

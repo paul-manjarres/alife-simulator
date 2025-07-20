@@ -3,34 +3,93 @@ package org.yagamipaul.alife.entities;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.Getter;
+import org.yagamipaul.alife.entities.components.ProximitySensor;
+import org.yagamipaul.alife.entities.components.Sensor;
 import org.yagamipaul.alife.manager.TextureManager;
 
 public class Organism extends BaseEntity {
 
-  public Organism(Vector2 position, Vector2 direction) {
-    super(TextureManager.TRIANGLE_TEXTURE, position, direction);
-    this.velocity = 4.0f;
-    var rnd = new SecureRandom();
-    var angle = rnd.nextInt(360);
-    this.direction = new Vector2(MathUtils.cos(angle), MathUtils.sin(angle));
-    // this.rotation = angle;
-    // *MathUtils.degreesToRadians;
-  }
+    /** Health indicator of the entity */
+    @Getter
+    protected int health = 0;
 
-  @Override
-  public void update() {
+    /** Flag indicator of the entity's status */
+    @Getter
+    protected boolean alive = true;
 
-    this.position.add(this.direction);
-    // this.rotation-=2;
+    @Getter
+    protected List<Sensor> sensors;
 
-    int random = new SecureRandom().nextInt(100);
-    if (random < 25) {
-      this.decreaseHealth(1);
+    //    protected boolean move = false;
+    //    protected Vector2 targetPosition = Vector2.Zero;
+
+    public Organism(Vector2 position, Vector2 direction) {
+        super(TextureManager.CARNIVOROUS_TEXTURE, position, direction);
+        this.velocity = 4.0f;
+        var rnd = new SecureRandom();
+        var angle = rnd.nextInt(360);
+        this.direction = new Vector2(MathUtils.cos(angle), MathUtils.sin(angle));
+
+        this.size = 128;
+        this.health = 100;
+        this.sensors = new ArrayList<>();
+        this.sensors.add(new ProximitySensor(this, this.position));
     }
-  }
 
-  @Override
-  public String toString() {
-    return "Ant[" + this.id + "]";
-  }
+    @Override
+    public void update(float delta) {
+
+        float factor = 50f * delta;
+        // Se debe conectar el sensor.
+        // Si hay detectado algo en la cercania, dirigirse a el
+        // en colision, se elimina el obstaculo si es comida
+
+        this.position.add(this.direction.x * factor, this.direction.y * factor);
+        this.rect.setPosition(this.position.x - getRect().width / 2, this.position.y - getRect().height / 2);
+
+        int random = new SecureRandom().nextInt(100);
+        if (random < 10) {
+            this.decreaseHealth(1);
+        }
+    }
+
+    public int decreaseHealth(int value) {
+        if (!alive) {
+            return this.health;
+        }
+        if (value < 0) {
+            value = 0;
+        }
+        this.health -= value;
+        if (this.health <= 0) {
+            die();
+        }
+        return this.health;
+    }
+
+    private void die() {
+        this.health = 0;
+        this.alive = false;
+        pcSupport.firePropertyChange("alive", true, false);
+    }
+
+    //    public int increaseHealth(int value) {
+    //        if (!alive) {
+    //            return this.health;
+    //        }
+    //
+    //        if (value < 0) {
+    //            value = 0;
+    //        }
+    //        this.health += value;
+    //        return this.health;
+    //    }
+
+    @Override
+    public String toString() {
+        return "Organism[" + this.id + "]";
+    }
 }

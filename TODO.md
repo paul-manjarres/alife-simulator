@@ -2,7 +2,7 @@
 
 * Definir interfaz para sensores
 * Dibujar sensor por cada entidad.
-* 
+* Centrar el sensor
 
 
 
