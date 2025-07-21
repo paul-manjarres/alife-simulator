@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import lombok.Getter;
+import org.yagamipaul.alife.screen.hud.FloatingEntityInfo;
 
 public abstract class BaseEntity implements Observable {
 
@@ -33,6 +34,9 @@ public abstract class BaseEntity implements Observable {
 
     protected int size;
 
+    @Getter
+    protected FloatingEntityInfo info;
+
     protected BaseEntity(Texture texture, Vector2 position, Vector2 direction) {
         super();
         this.texture = texture;
@@ -45,6 +49,8 @@ public abstract class BaseEntity implements Observable {
                 this.position.y - texture.getHeight() / 2f,
                 texture.getWidth(),
                 texture.getHeight());
+
+        this.info = new FloatingEntityInfo(this);
     }
 
     /** Updates the state of the entity. */

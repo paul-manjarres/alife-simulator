@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -27,12 +26,12 @@ public class GameScreen implements Screen {
 
     private static final Logger log = LoggerFactory.getLogger(GameScreen.class);
 
-    final MainGameApplication game;
-
-    private OrthographicCamera camera;
+    private final MainGameApplication game;
+    private final OrthographicCamera camera;
     private final Simulator simulator;
     private final SecureRandom secureRandom;
     private static final boolean DEBUG_MODE = false;
+    private boolean showLabels = true;
 
     Matrix4 uiMatrix;
 
@@ -48,7 +47,6 @@ public class GameScreen implements Screen {
         this.secureRandom = new SecureRandom();
 
         for (int i = 0; i < 1; i++) {
-
             Organism newOrganism = null;
             if (secureRandom.nextDouble() <= 0.5d) {
                 newOrganism = new Carnivorous(
@@ -57,7 +55,6 @@ public class GameScreen implements Screen {
                 newOrganism = new Herviborous(
                         new Vector2(secureRandom.nextInt(700) - 350, secureRandom.nextInt(500) - 250), Vector2.Zero);
             }
-
             simulator.addEntity(newOrganism);
             newOrganism.addObserver(simulator);
         }
@@ -87,7 +84,7 @@ public class GameScreen implements Screen {
         sr.setColor(Color.WHITE);
         sr.setProjectionMatrix(camera.combined);
 
-        if(DEBUG_MODE) {
+        if (DEBUG_MODE) {
             drawDebugLine(Vector2.Zero, new Vector2(500, 500), camera.combined, sr);
         }
 
@@ -109,11 +106,15 @@ public class GameScreen implements Screen {
             newOrganism.addObserver(simulator);
         }
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
+            this.showLabels = !this.showLabels;
+        }
+
         if (Gdx.input.isTouched() && !isTouched) {
             isTouched = true;
             Vector3 pos = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
             simulator.addEntity(new Food(VectorUtils.to2D(pos), Vector2.Zero));
-            log.debug("Position x:{} - y:{}- Delta: {}", pos.x, pos.y, Gdx.graphics.getDeltaTime());
+            // log.debug("Position x:{} - y:{}- Delta: {}", pos.x, pos.y, Gdx.graphics.getDeltaTime());
         }
 
         sr.begin(ShapeRenderer.ShapeType.Filled);
@@ -145,11 +146,17 @@ public class GameScreen implements Screen {
                 entity.renderRect(sr);
             }
         }
-
         sr.end();
 
         SpriteBatch batch = game.getBatch();
         BitmapFont font = game.font;
+
+        if (showLabels) {
+            for (BaseEntity entity : simulator.getEntities()) {
+                entity.getInfo().renderShape(sr, font, camera);
+            }
+        }
+
         int fps = Gdx.graphics.getFramesPerSecond();
 
         batch.setProjectionMatrix(camera.combined);
@@ -157,33 +164,15 @@ public class GameScreen implements Screen {
 
         for (BaseEntity entity : simulator.getEntities()) {
             entity.update(delta);
+            if (showLabels) {
+                entity.getInfo().renderText(batch, font);
+            }
 
             if (entity instanceof NonLiving) {
-                font.draw(
-                        batch,
-                        "Id: " + entity.getId(),
-                        (int) entity.getPosition().x,
-                        (int) entity.getPosition().y + 30);
                 entity.render(batch);
-
             } else if (entity instanceof Organism org) {
                 if (org.isAlive()) {
                     entity.render(batch);
-                    font.draw(
-                            batch,
-                            "Id: " + org.getId() + " - Life: " + org.getHealth(),
-                            (int) entity.getPosition().x,
-                            (int) entity.getPosition().y + 100f);
-
-                    float angle = MathUtils.radiansToDegrees
-                            * MathUtils.atan2(entity.getDirection().y, entity.getDirection().x);
-
-                    font.draw(batch, "Angle: " + (int) angle, entity.getPosition().x, entity.getPosition().y + 80);
-                    font.draw(
-                            batch,
-                            "X: " + (int) entity.getPosition().x + " , Y: " + (int) entity.getPosition().y,
-                            entity.getPosition().x,
-                            entity.getPosition().y + 60);
                 }
             }
         }
