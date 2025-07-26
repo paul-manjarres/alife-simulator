@@ -30,7 +30,7 @@ public class GameScreen implements Screen {
     private final OrthographicCamera camera;
     private final Simulator simulator;
     private final SecureRandom secureRandom;
-    private static final boolean DEBUG_MODE = false;
+    private static final boolean DEBUG_MODE = true;
     private boolean showLabels = true;
 
     Matrix4 uiMatrix;
@@ -120,18 +120,25 @@ public class GameScreen implements Screen {
         sr.begin(ShapeRenderer.ShapeType.Filled);
 
         // Check collisions
-        for (int i = 0; i < simulator.getEntities().size(); i++) {
+        //        for (int i = 0; i < simulator.getEntities().size(); i++) {
+        //            BaseEntity e1 = simulator.getEntities().get(i);
+        //            for (int j = i + 1; j < simulator.getEntities().size(); j++) {
+        //                BaseEntity e2 = simulator.getEntities().get(j);
+        //                if (e1.getRect().overlaps(e2.getRect())) {
+        //                    if (e1 instanceof Organism o) {
+        //                        o.getSensors().forEach(s -> s.trigger(e2));
+        //                    }
+        //                    if (e2 instanceof Organism o) {
+        //                        o.getSensors().forEach(s -> s.trigger(e1));
+        //                    }
+        //                }
+        //            }
+        //        }
+        int numberOfEntities = simulator.getEntities().size();
+        for (int i = 0; i < numberOfEntities; i++) {
             BaseEntity e1 = simulator.getEntities().get(i);
-            for (int j = i + 1; j < simulator.getEntities().size(); j++) {
-                BaseEntity e2 = simulator.getEntities().get(j);
-                if (e1.getRect().overlaps(e2.getRect())) {
-                    if (e1 instanceof Organism o) {
-                        o.getSensors().forEach(s -> s.trigger(e2));
-                    }
-                    if (e2 instanceof Organism o) {
-                        o.getSensors().forEach(s -> s.trigger(e1));
-                    }
-                }
+            if (e1 instanceof Organism o) {
+                o.getSensors().forEach((type, sensor) -> sensor.check(simulator.getEntities()));
             }
         }
 
@@ -139,7 +146,7 @@ public class GameScreen implements Screen {
         if (DEBUG_MODE) {
             for (BaseEntity entity : simulator.getEntities()) {
                 if (entity instanceof Organism o) {
-                    for (Sensor s : o.getSensors()) {
+                    for (Sensor s : o.getSensors().values()) {
                         ((Renderable) s).render(sr);
                     }
                 }
@@ -156,8 +163,6 @@ public class GameScreen implements Screen {
                 entity.getInfo().renderShape(sr, font, camera);
             }
         }
-
-        int fps = Gdx.graphics.getFramesPerSecond();
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
@@ -178,7 +183,8 @@ public class GameScreen implements Screen {
         }
 
         batch.setProjectionMatrix(uiMatrix);
-        font.draw(batch, "FPS: " + fps, 3, Gdx.graphics.getHeight() - 3);
+        int fps = Gdx.graphics.getFramesPerSecond();
+        font.draw(batch, "FPS: " + fps, 3, Gdx.graphics.getHeight() - 3f);
         font.draw(batch, "Entities: " + simulator.getEntities().size(), 3, Gdx.graphics.getHeight() - 30f);
         batch.end();
     }

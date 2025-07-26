@@ -3,11 +3,12 @@ package org.yagamipaul.alife.entities;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.Getter;
 import org.yagamipaul.alife.entities.components.ProximitySensor;
 import org.yagamipaul.alife.entities.components.Sensor;
+import org.yagamipaul.alife.entities.components.SensorType;
 import org.yagamipaul.alife.manager.TextureManager;
 
 public class Organism extends BaseEntity {
@@ -21,10 +22,7 @@ public class Organism extends BaseEntity {
     protected boolean alive = true;
 
     @Getter
-    protected List<Sensor> sensors;
-
-    //    protected boolean move = false;
-    //    protected Vector2 targetPosition = Vector2.Zero;
+    protected Map<SensorType, Sensor> sensors;
 
     public Organism(Vector2 position, Vector2 direction) {
         super(TextureManager.CARNIVOROUS_TEXTURE, position, direction);
@@ -35,8 +33,8 @@ public class Organism extends BaseEntity {
 
         this.size = 128;
         this.health = 100;
-        this.sensors = new ArrayList<>();
-        this.sensors.add(new ProximitySensor(this, this.position));
+        this.sensors = new HashMap<>();
+        this.sensors.put(SensorType.PROXIMITY, new ProximitySensor(this, this.position));
     }
 
     @Override
@@ -53,6 +51,12 @@ public class Organism extends BaseEntity {
         int random = new SecureRandom().nextInt(100);
         if (random < 10) {
             this.decreaseHealth(1);
+        }
+
+        ProximitySensor ps = (ProximitySensor) this.sensors.get(SensorType.PROXIMITY);
+        if (ps.isTriggered()) {
+            // Stop movement.
+
         }
     }
 
