@@ -3,7 +3,7 @@ package org.yagamipaul.alife.entities;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import java.security.SecureRandom;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import lombok.Getter;
 import org.yagamipaul.alife.entities.components.ProximitySensor;
@@ -26,21 +26,21 @@ public class Organism extends BaseEntity {
 
     public Organism(Vector2 position, Vector2 direction) {
         super(TextureManager.CARNIVOROUS_TEXTURE, position, direction);
-        this.velocity = 4.0f;
+        this.velocity = 50.0f;
         var rnd = new SecureRandom();
         var angle = rnd.nextInt(360);
         this.direction = new Vector2(MathUtils.cos(angle), MathUtils.sin(angle));
 
         this.size = 128;
         this.health = 100;
-        this.sensors = new HashMap<>();
+        this.sensors = new EnumMap<>(SensorType.class);
         this.sensors.put(SensorType.PROXIMITY, new ProximitySensor(this, this.position));
     }
 
     @Override
     public void update(float delta) {
 
-        float factor = 50f * delta;
+        float factor = this.velocity * delta;
         // Se debe conectar el sensor.
         // Si hay detectado algo en la cercania, dirigirse a el
         // en colision, se elimina el obstaculo si es comida
@@ -53,10 +53,9 @@ public class Organism extends BaseEntity {
             this.decreaseHealth(1);
         }
 
-        ProximitySensor ps = (ProximitySensor) this.sensors.get(SensorType.PROXIMITY);
-        if (ps.isTriggered()) {
-            // Stop movement.
-
+        ProximitySensor proximitySensor = (ProximitySensor) this.sensors.get(SensorType.PROXIMITY);
+        if (proximitySensor.isTriggered()) {
+            stop();
         }
     }
 
@@ -91,6 +90,10 @@ public class Organism extends BaseEntity {
     //        this.health += value;
     //        return this.health;
     //    }
+
+    public void stop() {
+        this.velocity = 0.0f;
+    }
 
     @Override
     public String toString() {

@@ -9,6 +9,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -30,8 +33,10 @@ public class GameScreen implements Screen {
     private final OrthographicCamera camera;
     private final Simulator simulator;
     private final SecureRandom secureRandom;
-    private static final boolean DEBUG_MODE = true;
-    private boolean showLabels = true;
+    private boolean debugMode = false;
+    private boolean showLabels = false;
+    private TiledMap tileMap;
+    private OrthogonalTiledMapRenderer mapRenderer;
 
     Matrix4 uiMatrix;
 
@@ -39,9 +44,13 @@ public class GameScreen implements Screen {
         this.game = game;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);
-        camera.translate(-camera.viewportWidth / 2, -camera.viewportHeight / 2);
+//        camera.translate(-camera.viewportWidth / 2, -camera.viewportHeight / 2);
+        camera.translate(0,0);
         uiMatrix = camera.combined.cpy();
         uiMatrix.setToOrtho2D(0, 0, 1280, 720);
+
+        tileMap = new TmxMapLoader().load("maps/mainmap.tmx");
+        mapRenderer = new OrthogonalTiledMapRenderer(tileMap);
 
         simulator = new Simulator();
         this.secureRandom = new SecureRandom();
@@ -79,12 +88,16 @@ public class GameScreen implements Screen {
         // tell the camera to update its matrices.
 
         camera.update();
+
+        mapRenderer.setView(camera);
+        mapRenderer.render();
+
         // camera.zoom += 0.05f * Gdx.graphics.getDeltaTime();
         ShapeRenderer sr = game.getShapeRenderer();
         sr.setColor(Color.WHITE);
         sr.setProjectionMatrix(camera.combined);
 
-        if (DEBUG_MODE) {
+        if (debugMode) {
             drawDebugLine(Vector2.Zero, new Vector2(500, 500), camera.combined, sr);
         }
 
@@ -96,10 +109,10 @@ public class GameScreen implements Screen {
             Organism newOrganism = null;
             if (secureRandom.nextDouble() <= 0.5d) {
                 newOrganism = new Carnivorous(
-                        new Vector2(secureRandom.nextInt(700) - 350, secureRandom.nextInt(500) - 250), Vector2.Zero);
+                        new Vector2(secureRandom.nextInt(700), secureRandom.nextInt(500)), Vector2.Zero);
             } else {
                 newOrganism = new Herviborous(
-                        new Vector2(secureRandom.nextInt(700) - 350, secureRandom.nextInt(500) - 250), Vector2.Zero);
+                        new Vector2(secureRandom.nextInt(700), secureRandom.nextInt(500)), Vector2.Zero);
             }
 
             simulator.addEntity(newOrganism);
@@ -108,6 +121,10 @@ public class GameScreen implements Screen {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
             this.showLabels = !this.showLabels;
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+            this.debugMode = !this.debugMode;
         }
 
         if (Gdx.input.isTouched() && !isTouched) {
@@ -120,20 +137,6 @@ public class GameScreen implements Screen {
         sr.begin(ShapeRenderer.ShapeType.Filled);
 
         // Check collisions
-        //        for (int i = 0; i < simulator.getEntities().size(); i++) {
-        //            BaseEntity e1 = simulator.getEntities().get(i);
-        //            for (int j = i + 1; j < simulator.getEntities().size(); j++) {
-        //                BaseEntity e2 = simulator.getEntities().get(j);
-        //                if (e1.getRect().overlaps(e2.getRect())) {
-        //                    if (e1 instanceof Organism o) {
-        //                        o.getSensors().forEach(s -> s.trigger(e2));
-        //                    }
-        //                    if (e2 instanceof Organism o) {
-        //                        o.getSensors().forEach(s -> s.trigger(e1));
-        //                    }
-        //                }
-        //            }
-        //        }
         int numberOfEntities = simulator.getEntities().size();
         for (int i = 0; i < numberOfEntities; i++) {
             BaseEntity e1 = simulator.getEntities().get(i);
@@ -143,7 +146,7 @@ public class GameScreen implements Screen {
         }
 
         // Draw sensors
-        if (DEBUG_MODE) {
+        if (debugMode) {
             for (BaseEntity entity : simulator.getEntities()) {
                 if (entity instanceof Organism o) {
                     for (Sensor s : o.getSensors().values()) {
