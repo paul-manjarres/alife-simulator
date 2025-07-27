@@ -4,6 +4,9 @@ carnivoro.png
 circle-64.png
 hervivoro.png
 libgdx.png
+maps/mainmap.tmx
+tilesets/grass-tile.png
+tilesets/grass-tile.tsx
 triangle-64-2.png
 triangle-64.png
 ui/font-list.fnt
